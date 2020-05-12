@@ -74,7 +74,7 @@ def settings():
 
             # check that name isnt any injection attack
             filename = secure_filename(tempimage.filename)
-			print(os.getcwd())
+            print(os.getcwd())
             # save this image
             filename = os.getcwd() + "static/images/" + str(time.time()) + filename
             tempimage.save(filename)
