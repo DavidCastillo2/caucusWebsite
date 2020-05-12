@@ -193,7 +193,7 @@ def send_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
-local = True
+local = False
 if __name__ == '__main__':
     if local:
         import os
