@@ -63,8 +63,8 @@ def createGraph():
 
         imgData = io.BytesIO()
         filename = "graph.png"
-        imgData.seek(0)
         plt.savefig(imgData)
+        imgData.seek(0)
         my_bucket.Object(filename).put(Body=imgData)
 
     # create unique name to avoid cache problems
