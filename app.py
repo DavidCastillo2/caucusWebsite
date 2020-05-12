@@ -71,7 +71,7 @@ def settings():
             tempimage = request.files["filename"]
             if tempimage.filename == '':
                 return render_template('index.html', alert="settings")
-            basedir = os.path.abspath(os.path.dirname(__file__))
+            basedir = os.path.dirname(os.path.dirname(__file__))
             filename = secure_filename(tempimage.filename)
             print("\n\n\n"+os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename) +"\n\n\n")
             tempimage.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
