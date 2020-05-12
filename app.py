@@ -76,7 +76,7 @@ def settings():
             filename = secure_filename(tempimage.filename)
 
             # save this image
-            filename = "/static/images/" + str(time.time()) + filename
+            filename = os.getcwd() + "/static/images/" + str(time.time()) + filename
             tempimage.save(filename)
 
             error = None
