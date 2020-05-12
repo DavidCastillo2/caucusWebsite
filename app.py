@@ -6,6 +6,7 @@
 
 from flask import Flask, render_template, url_for, g, redirect, request, flash, session, Blueprint, send_from_directory
 from werkzeug.utils import secure_filename
+import time as time
 
 from cand import Candidate
 #import toastr as toastr
@@ -68,22 +69,16 @@ def settings():
         if "insert" in request.form:
             name = request.form["candName"]
             bio = request.form["candBio"]
-            tempimage = request.files["filename"]
+            tempimage = request.files["filename"]  # special object from Flask
             if tempimage.filename == '':
                 return render_template('index.html', alert="settings")
-            basedir = os.path.dirname(os.path.abspath(__file__))
+
+            # check that name isnt any injection attack
             filename = secure_filename(tempimage.filename)
-            basedir = os.path.join(basedir, os.pardir)
 
-            print("\n\n\n" + os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename) + "\n\n\n")
-            print("\n\n\n" + basedir + "\n\n\n")
-            print("\n\n\n" + filename + "\n\n\n")
-            print("\n\n\nFILE DIRECTORY: " + os.getcwd() + "\n\n\n")
-
-            tempimage.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
-
-            #tempimage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            image = filename
+            # save this image
+            filename = "static/images" + str(time.time()) + filename
+            tempimage.save(filename)
 
             error = None
 
@@ -93,7 +88,7 @@ def settings():
             if error is not None:
                 flash(error)
             else:
-                insert("candidate", ["name", "bio", "img"], [name, bio, image])
+                insert("candidate", ["name", "bio", "img"], [name, bio, filename])
                 return render_template('index.html', alert="insert")
 
         # Remove a Candidate Form
@@ -120,6 +115,7 @@ def settings():
 
     # Main Page
     return render_template('index.html')
+
 
 # Count Page
 @app.route('/count', methods=("GET", "POST"))
@@ -183,7 +179,7 @@ def data():
         bios.append(canBio)
 
     for i in range(0, len(names)):
-        imageURL = images[i]# [40:]
+        imageURL = images[i]  # [40:]
         cand = Candidate(names[i], bios[i], imageURL)
         Candidates.append(cand)
 
@@ -193,6 +189,7 @@ def data():
             os.remove('static/images/' + filename)
     filename = createGraph()
     return render_template('data.html', graphPath=filename, Candidates=Candidates)
+
 
 @app.route('/uploads/<filename>')
 def send_file(filename):

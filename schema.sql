@@ -2,7 +2,7 @@
 -- Drop any existing data and create empty tables.
 
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS candidates;
+DROP TABLE IF EXISTS candidate;
 DROP TABLE IF EXISTS settings;
 
 CREATE TABLE candidate (
