@@ -67,8 +67,8 @@ def createGraph():
         imgData.seek(0)
         my_bucket.Object(filename).put(Body=imgData)
 
-    # create unique name to avoid cache problems
-    filename = "static/images/graph" + str(time.time()) + '.png'
-    plt.savefig(filename)
-    return filename
+    else:
+        # create unique name to avoid cache problems
+        filename = "static/images/graph" + str(time.time()) + '.png'
+        plt.savefig(filename)
 
