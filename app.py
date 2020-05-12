@@ -73,6 +73,7 @@ def settings():
                 return render_template('index.html', alert="settings")
             basedir = os.path.dirname(os.path.abspath(__file__))
             filename = secure_filename(tempimage.filename)
+            basedir = os.path.join(basedir, os.pardir)
 
             print("\n\n\n" + os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename) + "\n\n\n")
             print("\n\n\n" + basedir + "\n\n\n")
