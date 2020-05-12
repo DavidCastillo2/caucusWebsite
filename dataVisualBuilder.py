@@ -63,6 +63,7 @@ def createGraph():
 
         imgData = io.BytesIO()
         filename = "graph.png"
+        imgData.seek(0)
         plt.savefig(imgData)
         my_bucket.Object(filename).put(Body=imgData)
 
