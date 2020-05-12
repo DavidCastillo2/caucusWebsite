@@ -87,7 +87,7 @@ def settings():
 
             # save this image
 
-            filename = app.config["STATIC_ROOT"] + str(time.time()) + filename
+            filename = app.config["STATIC_ROOT"] + "/" + str(time.time()) + filename
             tempimage.save(filename)
             print(filename)
             error = None
