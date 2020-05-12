@@ -163,6 +163,20 @@ def settings():
 # Count Page
 @app.route('/count', methods=("GET", "POST"))
 def count():
+    if request.method == "POST":
+        print("Hello")
+        db = get_db()
+        numOfVotes = request.form['numVotes']
+        print("Got Votes")
+        name = request.form['Candname']
+        print("Got Name")
+        db.execute(
+                "UPDATE candidate SET numVotes=(?) WHERE name=(?)", (numOfVotes, name),
+            )
+        db.commit()
+        print("Name: %s\tNum: %s" % (name, numOfVotes))
+        return redirect(url_for('count'))
+
     global Candidates
     Candidates = []
     # get candidate names
@@ -189,13 +203,6 @@ def count():
         cand = Candidate(names[i], bios[i], imageURL)
         Candidates.append(cand)
 
-    if request.method == "POST":
-        db = get_db()
-        numOfVotes = request.form['numVotes']
-        name = request.form['Candname']
-        db.execute(
-                "UPDATE candidate WHERE name=(?) SET numVotes=(?)", (name, numOfVotes),
-            )
     return render_template('votes.html', Candidates=Candidates)
 
 
@@ -227,7 +234,7 @@ def data():
         Candidates.append(cand)
 
     createGraph()
-    
+
     return render_template('data.html', Candidates=Candidates)
 
 

@@ -49,17 +49,17 @@
 		<div class="box" style="margin-left:17%;">
 	    {% if Candidates is iterable() %}
          {% for item in Candidates %}
-         <form action="#" style="height:350px;">
+         <form method="post" style="height:350px;">
            <div class="formheader" id="CandName" name="CandName" style="width:450px; position:relative; right:18px; bottom:17px;">{{ item.name }}</div>
 
-
-           <img src="{{ item.picture }}" alt="img" style="width:100px;height:100px;">
+           <input type="hidden" value="{{item.name}}" name="Candname">
+           <img src="{{ item.picture  }}" alt="img" style="width:100px;height:100px;">
 
 
 
            <div class="textbox" style="position:relative; bottom:82px; left:110px; height: 100px; overflow-y: scroll; width:300px;">{{ item.bio }}</div>
-           <label class="required" for="canVote" style="position: relative; top:-70px;">Input number of votes that {{ item.name }} recieved in this round.</label>
-           <input type="number" class="form-control" name="numOfVotes" id="numOfVotes" style="position:relative; top:-70px;" required>
+           <label class="required" for="numVotes" style="position: relative; top:-70px;">Input number of votes that {{ item.name }} received in this round.</label>
+           <input type="number" class="form-control" name="numVotes" id="numVotes" style="position:relative; top:-70px;" required>
            <input type="submit" value="Confirm" style="position:relative; bottom:60px;">
             </form>
          {% endfor %}
