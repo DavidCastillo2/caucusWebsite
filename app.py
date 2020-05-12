@@ -74,6 +74,8 @@ def settings():
             basedir = os.path.dirname(os.path.dirname(__file__))
             filename = secure_filename(tempimage.filename)
             print("\n\n\n"+os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename) +"\n\n\n")
+			print("\n\n\n"+basedir +"\n\n\n")
+			print("\n\n\n"+filename +"\n\n\n")
             tempimage.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
 
             #tempimage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
