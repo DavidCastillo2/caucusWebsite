@@ -3,3 +3,4 @@ Jinja2
 gunicorn
 numpy
 matplotlib
+boto3
