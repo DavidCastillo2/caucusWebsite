@@ -3,6 +3,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import time as time
 from db import init_app, get_db, insert, remove, init_app
+import boto3
+import os
+import io
 
 
 def createGraph():
@@ -50,6 +53,19 @@ def createGraph():
     # tie it all together and save as an image
     fig.tight_layout()
     #plt.show() # Shows created graph, comment out when runnning server side
+
+    s3Boolean = True
+
+    # Save to S3 Bucket
+    if s3Boolean:
+        s3_resource = boto3.resource('s3')
+        my_bucket = s3_resource.Bucket(os.environ.get("S3_BUCKET"))
+
+        imgData = io.BytesIO()
+        filename = "graph.png"
+        plt.savefig(imgData)
+        my_bucket.Object(filename).put(Body=imgData)
+
     # create unique name to avoid cache problems
     filename = "static/images/graph" + str(time.time()) + '.png'
     plt.savefig(filename)

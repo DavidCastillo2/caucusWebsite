@@ -90,6 +90,7 @@ def files():
 
     return render_template('files.html', my_bucket=my_bucket, files=summaries)
 
+s3boolean = True
 
 # Settings Page
 @app.route('/settings', methods=("GET", "POST"))
@@ -108,19 +109,20 @@ def settings():
             filename = secure_filename(tempimage.filename)
 
             # Save to S3 bucket
-            s3_resource = boto3.resource('s3')
-            my_bucket = s3_resource.Bucket(app.config["S3_BUCKET"])
-            my_bucket.Object(filename).put(Body=tempimage)
-            filename = "https://heroku-caucus.s3.us-east-2.amazonaws.com/" + filename
+            if s3boolean:
+                s3_resource = boto3.resource('s3')
+                my_bucket = s3_resource.Bucket(app.config["S3_BUCKET"])
+                my_bucket.Object(filename).put(Body=tempimage)
+                filename = "https://heroku-caucus.s3.us-east-2.amazonaws.com/" + filename
 
-            # save this image
-            '''    
-            path = "static/images/"
-            path = os.path.join(path, str(time.time()) + filename)
-            filename = path[7:]
-            tempimage.save(path)
-            print(filename)
-            '''
+            # save this image Locally
+            else:
+                path = "static/images/"
+                path = os.path.join(path, str(time.time()) + filename)
+                filename = path[7:]
+                tempimage.save(path)
+                print(filename)
+
             error = None
 
             if not name or not bio:
