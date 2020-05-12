@@ -7,9 +7,14 @@
 from flask import Flask, render_template, url_for, g, redirect, request, flash, session, Blueprint, send_from_directory
 from werkzeug.utils import secure_filename
 import time as time
-
 from cand import Candidate
-#import toastr as toastr
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# import toastr as toastr
 app = Flask(__name__)
 
 # Make the WSGI interface available at the top level so wfastcgi can get it.
@@ -25,6 +30,11 @@ jinja2_env = ninja.Environment(loader=ninja.FileSystemLoader(template_dir))
 app.config.from_mapping(
     SECRET_KEY="dev",
     DATABASE=os.path.join(app.instance_path, "myData.sqlite"),
+    STATICFILES_DIRS=(
+        os.path.join(BASE_DIR, 'static'),
+    ),
+    STATIC_URL='/static/',
+    STATIC_ROOT=os.path.join(BASE_DIR, 'staticfiles'),
 )
 
 from db import init_app, get_db, insert, remove, init_app
@@ -76,9 +86,10 @@ def settings():
             filename = secure_filename(tempimage.filename)
 
             # save this image
-            filename = os.getcwd()[1:] + "/static/images/" + str(time.time()) + filename
-            tempimage.save(filename)
 
+            filename = app.config["STATIC_ROOT"] + str(time.time()) + filename
+            tempimage.save(filename)
+            print(filename)
             error = None
 
             if not name or not bio:
