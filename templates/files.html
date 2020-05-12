@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8", lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>New Caucus</title>
+    <body style="background:#D3D3D3">
+
+        <div class="container">
+            <div class="row">
+               <div class="col-12-xs">
+                  <h3>Bucket Info</h3>
+                  <p>Created: {{ my_bucket.creation_date }}</p>
+
+                  <hr>
+                  {% for f in files %}
+                  {{ f.key }}<br>
+                  {{ f.last_modified }}
+                  {% endfor %}
+                  <img src="https://heroku-caucus.s3.us-east-2.amazonaws.com/Druid.PNG">
+               </div>
+            </div>
+        </div>
+
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="js/bootstrap.min.js"></script>
+    </body>
+</html>

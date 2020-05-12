@@ -9,6 +9,8 @@ from werkzeug.utils import secure_filename
 import time as time
 from cand import Candidate
 import os
+import boto3
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -35,6 +37,16 @@ app.config.from_mapping(
     ),
     STATIC_URL='/static/',
     STATIC_ROOT=os.path.join(BASE_DIR, 'staticfiles'),
+    S3_BUCKET="heroku-caucus",
+    S3_KEY="AKIA52BHTNHFZDMUBQF3",
+    S3_SECRET="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",
+)
+
+# S3 setup
+s3 = boto3.resource(
+    's3',
+    aws_access_key_id=app.config["S3_KEY"],
+    aws_secret_access_key=app.config["S3_SECRET"]
 )
 
 from db import init_app, get_db, insert, remove, init_app
@@ -69,6 +81,16 @@ def home():
     return render_template('home.html')
 
 
+# S3 file stuff
+@app.route('/files')
+def files():
+    s3_resource = boto3.resource('s3')
+    my_bucket = s3_resource.Bucket(app.config["S3_BUCKET"])
+    summaries = my_bucket.objects.all()
+
+    return render_template('files.html', my_bucket=my_bucket, files=summaries)
+
+
 # Settings Page
 @app.route('/settings', methods=("GET", "POST"))
 @login_required
@@ -82,14 +104,23 @@ def settings():
             if tempimage.filename == '':
                 return render_template('index.html', alert="settings")
 
-            # check that name isnt any injection attack
+            # Safely wrap filename to avoid those pesky hackers
             filename = secure_filename(tempimage.filename)
 
-            # save this image
+            # Save to S3 bucket
+            s3_resource = boto3.resource('s3')
+            my_bucket = s3_resource.Bucket(app.config["S3_BUCKET"])
+            my_bucket.Object(filename).put(Body=tempimage)
+            filename = "https://heroku-caucus.s3.us-east-2.amazonaws.com/" + filename
 
-            filename = app.config["STATIC_ROOT"] + "/" + str(time.time()) + filename
-            tempimage.save(filename)
+            # save this image
+            '''    
+            path = "static/images/"
+            path = os.path.join(path, str(time.time()) + filename)
+            filename = path[7:]
+            tempimage.save(path)
             print(filename)
+            '''
             error = None
 
             if not name or not bio:
