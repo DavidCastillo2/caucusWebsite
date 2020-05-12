@@ -25,7 +25,6 @@ jinja2_env = ninja.Environment(loader=ninja.FileSystemLoader(template_dir))
 app.config.from_mapping(
     SECRET_KEY="dev",
     DATABASE=os.path.join(app.instance_path, "myData.sqlite"),
-    UPLOAD_FOLDER=os.path.join(app.instance_path, 'UPLOAD_FOLDER')
 )
 
 from db import init_app, get_db, insert, remove, init_app
@@ -77,7 +76,7 @@ def settings():
             filename = secure_filename(tempimage.filename)
 
             # save this image
-            filename = "static/images" + str(time.time()) + filename
+            filename = "static/images/" + str(time.time()) + filename
             tempimage.save(filename)
 
             error = None
@@ -189,11 +188,6 @@ def data():
             os.remove('static/images/' + filename)
     filename = createGraph()
     return render_template('data.html', graphPath=filename, Candidates=Candidates)
-
-
-@app.route('/uploads/<filename>')
-def send_file(filename):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 local = True
