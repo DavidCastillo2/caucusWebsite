@@ -55,7 +55,7 @@ app.register_blueprint(login.bp)
 # Home Page
 @app.route('/')
 def home():
-    
+
     return render_template('home.html')
 
 
@@ -71,11 +71,13 @@ def settings():
             tempimage = request.files["filename"]
             if tempimage.filename == '':
                 return render_template('index.html', alert="settings")
-            basedir = os.path.dirname(os.path.dirname(__file__))
+            basedir = os.path.dirname(__file__)
             filename = secure_filename(tempimage.filename)
-            print("\n\n\n"+os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename) +"\n\n\n")
-			print("\n\n\n"+basedir +"\n\n\n")
-			print("\n\n\n"+filename +"\n\n\n")
+
+            print("\n\n\n" + os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename) + "\n\n\n")
+            print("\n\n\n" + basedir + "\n\n\n")
+            print("\n\n\n" + filename + "\n\n\n")
+
             tempimage.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
 
             #tempimage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -195,7 +197,7 @@ def send_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
-local = False
+local = True
 if __name__ == '__main__':
     if local:
         import os
