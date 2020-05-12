@@ -38,8 +38,8 @@ app.config.from_mapping(
     STATIC_URL='/static/',
     STATIC_ROOT=os.path.join(BASE_DIR, 'staticfiles'),
     S3_BUCKET="heroku-caucus",
-    S3_KEY="AKIAJCDLU3QVUJSPUKBA",
-    S3_SECRET="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",
+    S3_KEY=os.environ.get('S3_KEY'),
+    S3_SECRET=os.environ.get('S3_SECRET'),
 )
 
 # S3 setup
