@@ -182,26 +182,49 @@ def count():
     # get candidate names
     db = get_db()
     cursor = db.cursor()
-
     # get data from candidates table
     names = []
     bios = []
     images = []
+    votes = []
+
+    for row in cursor.execute('SELECT * FROM settings'):
+        totalnum = row['numPeople']
+
     for row in cursor.execute('SELECT * FROM candidate'):
         canName = row['name']
         canImage = row['img']
         canBio = row['bio']
+        canPerc = row['numVotes']
         names.append(canName)
         images.append(canImage)
         bios.append(canBio)
+        votes.append(canPerc/totalnum)
+
+
 
     for i in range(0, len(names)):
         # imageURL = "https://i.imgur.com/yXvE8B1.png"
         # imageURL = url_for('static', filename=(images[i]))
         imageURL = images[i]# [40:]
         # imageURL = imageURL.replace("\\", "/")
+
         cand = Candidate(names[i], bios[i], imageURL)
         Candidates.append(cand)
+
+        print(imageURL)
+        cand = Candidate(names[i], bios[i], imageURL, votes)
+        Candidates.append(cand)
+
+    if request.method == "POST":
+        db = get_db()
+        numOfVotes = request.form['numVotes']
+
+        percVotes = numOfVotes / totalnum
+        name = request.form['Candname']
+        db.execute(
+                "UPDATE candidate WHERE name=(?) SET numVotes=(?)", (name, numOfVotes),
+            )
 
     return render_template('votes.html', Candidates=Candidates)
 
@@ -220,17 +243,32 @@ def data():
     names = []
     bios = []
     images = []
+    votes = []
+
+    for row in cursor.execute('SELECT * FROM settings'):
+        totalnum = row['numPeople']
+
     for row in cursor.execute('SELECT * FROM candidate'):
         canName = row['name']
         canImage = row['img']
         canBio = row['bio']
+        canVotes = row['numVotes']
         names.append(canName)
         images.append(canImage)
         bios.append(canBio)
+        votes.append(canVotes/totalnum)
+
+
 
     for i in range(0, len(names)):
+
         imageURL = images[i]  # [40:]
         cand = Candidate(names[i], bios[i], imageURL)
+
+        imageURL = images[i]# [40:]
+        print(imageURL)
+        cand = Candidate(names[i], bios[i], imageURL, votes)
+
         Candidates.append(cand)
 
     createGraph()

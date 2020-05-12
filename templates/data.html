@@ -43,7 +43,7 @@
                   <ol>
                     {% if Candidates is iterable() %}
                     {% for item in Candidates %}
-                        <li><b>{{ item.name }}</b></li>
+                        <li><b>{{ item.name }} {{item.votes}} </b></li>
                     {% endfor %}
                   </ol>
                   {% endif %}
