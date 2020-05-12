@@ -24,12 +24,12 @@ jinja2_env = ninja.Environment(loader=ninja.FileSystemLoader(template_dir))
 app.config.from_mapping(
     SECRET_KEY="dev",
     DATABASE=os.path.join(app.instance_path, "myData.sqlite"),
-    UPLOAD_FOLDER = os.path.join(app.instance_path, 'UPLOAD_FOLDER')
+    UPLOAD_FOLDER=os.path.join(app.instance_path, 'UPLOAD_FOLDER')
 )
 
 from db import init_app, get_db, insert, remove, init_app
 from dataVisualBuilder import createGraph
-init_app(app) # initilize the database
+init_app(app)  # initialize the database
 
 # App setup
 init_app(app)
@@ -46,8 +46,6 @@ from login import login_required
 app.register_blueprint(login.bp)
 
 
-
-
 ###########################################################################################################################################
 #                                                                                                                                         #
 #                                                           Routing                                                                       #
@@ -59,7 +57,6 @@ app.register_blueprint(login.bp)
 def home():
     
     return render_template('home.html')
-
 
 
 # Settings Page
@@ -74,9 +71,11 @@ def settings():
             tempimage = request.files["filename"]
             if tempimage.filename == '':
                 return render_template('index.html', alert="settings")
-
+            basedir = os.path.abspath(os.path.dirname(__file__))
             filename = secure_filename(tempimage.filename)
-            tempimage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            tempimage.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
+
+            #tempimage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             image = filename
 
             error = None
