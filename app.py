@@ -78,7 +78,7 @@ def settings():
             print("\n\n\n" + os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename) + "\n\n\n")
             print("\n\n\n" + basedir + "\n\n\n")
             print("\n\n\n" + filename + "\n\n\n")
-            print("\n\n\n" + os.getcwd() + "\n\n\n")
+            print("\n\n\nFILE DIRECTORY: " + os.getcwd() + "\n\n\n")
 
             tempimage.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))
 
