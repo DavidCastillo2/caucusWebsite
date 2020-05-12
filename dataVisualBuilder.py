@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import time as time
-from db import get_db
+from db import init_app, get_db, insert, remove, init_app
 
 
 def createGraph():
@@ -35,6 +35,8 @@ def createGraph():
     ax.set_title('Votes per Candidate')
     ax.set_xticks(x)
     ax.set_xticklabels(names)
+    ax.set_ylim(ymin=0)
+
 
     # populate the rectangles with correct information
     for rect in rects:

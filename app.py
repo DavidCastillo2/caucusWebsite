@@ -4,7 +4,7 @@
 #                                                                                                                                         #
 ###########################################################################################################################################
 
-from flask import Flask, render_template, url_for, g, redirect, request, flash, session, Blueprint
+from flask import Flask, render_template, url_for, g, redirect, request, flash, session, Blueprint, send_from_directory
 from werkzeug.utils import secure_filename
 
 from cand import Candidate
@@ -26,7 +26,7 @@ app.config.from_mapping(
     DATABASE=os.path.join(app.instance_path, "myData.sqlite"),
     UPLOAD_FOLDER = os.path.join(app.instance_path, 'UPLOAD_FOLDER')
 )
-print(app.config['UPLOAD_FOLDER'])
+
 from db import init_app, get_db, insert, remove, init_app
 from dataVisualBuilder import createGraph
 init_app(app) # initilize the database
@@ -77,8 +77,7 @@ def settings():
 
             filename = secure_filename(tempimage.filename)
             tempimage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            image = (os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            print("\n\n%s\n\n" % image)
+            image = filename
 
             error = None
 
@@ -121,10 +120,10 @@ def settings():
 def count():
     global Candidates
     Candidates = []
-	# get candidate names
+    # get candidate names
     db = get_db()
     cursor = db.cursor()
-	
+
     # get data from candidates table
     names = []
     bios = []
@@ -136,16 +135,15 @@ def count():
         names.append(canName)
         images.append(canImage)
         bios.append(canBio)
-	
+
     for i in range(0, len(names)):
         # imageURL = "https://i.imgur.com/yXvE8B1.png"
         # imageURL = url_for('static', filename=(images[i]))
         imageURL = images[i]# [40:]
         # imageURL = imageURL.replace("\\", "/")
-        print(imageURL)
         cand = Candidate(names[i], bios[i], imageURL)
         Candidates.append(cand)
-        
+
     if request.method == "POST":
         db = get_db()
         numOfVotes = request.form['numVotes']
@@ -162,10 +160,10 @@ def count():
 def data():
     global Candidates
     Candidates = []
-	# get candidate names
+    # get candidate names
     db = get_db()
     cursor = db.cursor()
-	
+
     # get data from candidates table
     names = []
     bios = []
@@ -177,19 +175,22 @@ def data():
         names.append(canName)
         images.append(canImage)
         bios.append(canBio)
-	
+
     for i in range(0, len(names)):
         imageURL = images[i]# [40:]
-        print(imageURL)
         cand = Candidate(names[i], bios[i], imageURL)
         Candidates.append(cand)
-	
+
     # graph
     for filename in os.listdir('static/images'):
         if filename.startswith('graph'):
             os.remove('static/images/' + filename)
     filename = createGraph()
-    return render_template('data.html', graphPath=filename)
+    return render_template('data.html', graphPath=filename, Candidates=Candidates)
+
+@app.route('/uploads/<filename>')
+def send_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 local = True

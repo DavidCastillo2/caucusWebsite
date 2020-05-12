@@ -41,7 +41,6 @@ def load_logged_in_user():
         g.user = (
             get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
         )
-        print(g.user)
 
 
 @bp.route("/register", methods=("GET", "POST"))
@@ -69,7 +68,6 @@ def register():
         ):
             # Username already exists
             error = "User {0} is already registered.".format(username)
-            print(error + "\n\n\n")
             return render_template('register.html', alert="taken")
         if error is None:
             # the name is available, store it in the database and go to
@@ -110,7 +108,6 @@ def login():
             session.clear()
             session["user_id"] = user["id"]
             session["user_type"] = user["userType"]
-            print(session['user_type'] + "\n\n\n")
 
             if session["user_type"] == "data":
                 return redirect(url_for("data"))
