@@ -203,9 +203,6 @@ def count():
         bios.append(canBio)
         votes.append(canPerc)
 
-    if alignment > totalAlignment:
-        alignment = 1
-
     for i in range(0, len(names)):
         imageURL = images[i]
         cand = Candidate(names[i], bios[i], imageURL, votes)
