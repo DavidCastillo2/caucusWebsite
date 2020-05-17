@@ -282,12 +282,10 @@ def data():
         Candidates.append(cand)
 
     # graph
-    for filename in os.listdir('static/images'):
-        if filename.startswith('graph'):
-            os.remove('static/images/' + filename)
-    filename = createGraph()
-    return render_template('data.html', graphPath=filename, Candidates=Candidates)
-
+    
+    createGraph()
+    
+    return render_template('data.html', Candidates=Candidates)
 
 local = True
 if __name__ == '__main__':
