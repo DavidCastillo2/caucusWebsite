@@ -56,6 +56,8 @@ init_app(app)  # initialize the database
 # App setup
 init_app(app)
 
+#default alignment start
+alignment = 1
 
 ###########################################################################################################################################
 #                                                                                                                                         #
@@ -159,10 +161,11 @@ def settings():
     # Main Page
     return render_template('index.html')
 
-
 # Count Page
 @app.route('/count', methods=("GET", "POST"))
 def count():
+    global alignment
+
     if request.method == "POST":
         print("Hello")
         db = get_db()
@@ -179,6 +182,7 @@ def count():
 
     global Candidates
     Candidates = []
+
     # get candidate names
     db = get_db()
     cursor = db.cursor()
@@ -187,24 +191,63 @@ def count():
     names = []
     bios = []
     images = []
+    votes = []
+
     for row in cursor.execute('SELECT * FROM candidate'):
         canName = row['name']
         canImage = row['img']
         canBio = row['bio']
+        canPerc= row['numVotes']
         names.append(canName)
         images.append(canImage)
         bios.append(canBio)
+        votes.append(canPerc)
+
+    if alignment > totalAlignment:
+        alignment = 1
 
     for i in range(0, len(names)):
-        # imageURL = "https://i.imgur.com/yXvE8B1.png"
-        # imageURL = url_for('static', filename=(images[i]))
-        imageURL = images[i]# [40:]
-        # imageURL = imageURL.replace("\\", "/")
-        cand = Candidate(names[i], bios[i], imageURL)
+        imageURL = images[i]
+        cand = Candidate(names[i], bios[i], imageURL, votes)
         Candidates.append(cand)
 
-    return render_template('votes.html', Candidates=Candidates)
+    return render_template('votes.html', alignment=alignment, Candidates=Candidates)
 
+@app.route('/nxtAlign')
+def changeAlignment():
+    db = get_db()
+    cursor = db.cursor()
+
+    global alignment
+    names = []
+    votes = []
+    for row in cursor.execute('SELECT * FROM settings'):
+        totalAlignment = row['realign']
+
+    # aaaaaa pull from database
+    for row in cursor.execute('SELECT * FROM settings'):
+        totalAlignment = row['realign']
+        totalPeople = row['numPeople']
+
+    for row in cursor.execute('SELECT * FROM candidate'):
+        canName = row['name']
+        canPerc= row['numVotes']
+        names.append(canName)
+        votes.append(canPerc/totalPeople)
+
+    # update alignment
+    if alignment < totalAlignment:
+        alignment = alignment + 1
+        print(alignment)
+        # realignment
+        for num in votes:
+            if num < 0.15:
+                loc = votes.index(num)
+                candName = names[loc]
+                # delete candidate from table
+                remove("candidate", "name", candName)
+
+    return redirect('/count')
 
 # Data Page
 @app.route('/data')
@@ -220,22 +263,33 @@ def data():
     names = []
     bios = []
     images = []
+    votes =[]
+
+    for row in cursor.execute('SELECT * FROM settings'):
+        totalPeople = row['numPeople']
+
     for row in cursor.execute('SELECT * FROM candidate'):
         canName = row['name']
         canImage = row['img']
         canBio = row['bio']
+        canPerc = row['numVotes']
         names.append(canName)
         images.append(canImage)
         bios.append(canBio)
+        votes.append("{0:.0f}%".format((canPerc/totalPeople)*100))
 
     for i in range(0, len(names)):
-        imageURL = images[i]  # [40:]
-        cand = Candidate(names[i], bios[i], imageURL)
+        imageURL = images[i]# [40:]
+        print(imageURL)
+        cand = Candidate(names[i], bios[i], imageURL, votes[i])
         Candidates.append(cand)
 
-    createGraph()
-
-    return render_template('data.html', Candidates=Candidates)
+    # graph
+    for filename in os.listdir('static/images'):
+        if filename.startswith('graph'):
+            os.remove('static/images/' + filename)
+    filename = createGraph()
+    return render_template('data.html', graphPath=filename, Candidates=Candidates)
 
 
 local = True
